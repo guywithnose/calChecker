@@ -49,7 +49,7 @@ func TestCmdCheck(t *testing.T) {
 	assert.Equal(
 		t,
 		fmt.Sprintf(
-			"Attempting to open %s in your browser\n%s, 12:00PM Something is going to happen\n%s, 1:00PM Another thing is going to happen\n",
+			"Attempting to open %s in your browser\n%s, 12:00PM  Something is going to happen\n%s, 1:00PM  Another thing is going to happen\nAll Day      All day event\n",
 			OAuthURL,
 			dayOfWeek,
 			dayOfWeek,
@@ -264,6 +264,10 @@ func getMockGoogleAPI(t *testing.T) *httptest.Server {
 							DateTime: fmt.Sprintf("%sT13:00:00Z", time.Now().Format("2006-01-02")),
 						},
 						Summary: "Another thing is going to happen",
+					},
+					{
+						Start:   &calendar.EventDateTime{},
+						Summary: "All day event",
 					},
 				},
 			}

@@ -3,6 +3,7 @@ package command
 import (
 	"fmt"
 	"io"
+	"text/tabwriter"
 	"time"
 
 	"github.com/guywithnose/runner"
@@ -112,13 +113,19 @@ func parseCalendars(srv *calendar.Service, items []*calendar.CalendarListEntry, 
 }
 
 func parseEvents(items []*calendar.Event, w io.Writer) error {
+	tabW := tabwriter.NewWriter(w, 0, 0, 2, ' ', 0)
+	defer tabW.Flush()
 	for _, event := range items {
-		start, err := time.Parse(time.RFC3339, event.Start.DateTime)
-		if err != nil {
-			return err
-		}
+		if event.Start.DateTime != "" {
+			start, err := time.Parse(time.RFC3339, event.Start.DateTime)
+			if err != nil {
+				return err
+			}
 
-		fmt.Fprintf(w, "%s %s\n", start.Format("Mon, 3:04PM"), event.Summary)
+			fmt.Fprintf(tabW, "%s\t%s\n", start.Format("Mon, 3:04PM"), event.Summary)
+		} else {
+			fmt.Fprintf(tabW, "All Day\t%s\n", event.Summary)
+		}
 	}
 
 	return nil
